@@ -412,7 +412,7 @@ export function WindowPriceCalculatorPage() {
 
                   <div className="space-y-3 text-sm">
                     {/* Per window breakdown */}
-                    {result.windows.map((w, i) => (
+                    {result.windows.map((w) => (
                       <div key={w.item.id} className="flex justify-between text-neutral-600">
                         <span className="truncate max-w-[140px]">
                           {w.item.name} ({w.area} m²)
