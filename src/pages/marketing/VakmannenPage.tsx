@@ -12,8 +12,7 @@ import {
   Home,
   ChevronDown,
   Phone,
-  Mail,
-  ExternalLink
+  Mail
 } from 'lucide-react'
 import { cn } from '@/lib/utils/cn'
 
