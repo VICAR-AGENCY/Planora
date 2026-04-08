@@ -49,7 +49,7 @@ export function AboutPage() {
         <div className="mx-auto max-w-3xl px-4 text-center sm:px-6">
           <h2 className="text-2xl font-bold text-neutral-900 sm:text-3xl">Het team</h2>
           <p className="mt-4 text-lg text-neutral-600">
-            Planora wordt gebouwd door een klein, gedreven team uit Antwerpen dat gelooft in de kracht van technologie om betere beslissingen te maken.
+            Planora wordt gebouwd door een klein, gedreven team uit België dat gelooft in de kracht van technologie om betere beslissingen te maken.
           </p>
         </div>
       </section>

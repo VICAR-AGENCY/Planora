@@ -65,7 +65,7 @@ export function Footer() {
                   </a>
                   <span className="flex items-center gap-2 text-sm text-primary-300">
                     <MapPin size={14} />
-                    Antwerpen, België
+                    België
                   </span>
                 </div>
               </AnimatedContainer>
@@ -146,7 +146,7 @@ export function Footer() {
               <p>&copy; {new Date().getFullYear()} Planora. Alle rechten voorbehouden.</p>
               <p className="flex items-center gap-1.5">
                 <img src="/favicon.png" alt="" className="h-4 w-4 rounded-sm" />
-                Gebouwd in Antwerpen
+                Gemaakt in België
               </p>
             </div>
           </div>
