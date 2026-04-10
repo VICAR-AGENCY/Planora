@@ -98,7 +98,7 @@ export function Header() {
                 {/* Mega Menu */}
                 {megaMenuOpen && (
                   <div className="absolute left-1/2 -translate-x-1/2 top-full pt-2 z-50">
-                    <div className="rounded-2xl border border-primary-100 bg-white shadow-xl min-w-[640px]">
+                    <div className="rounded-2xl border border-primary-100 bg-white shadow-xl min-w-[900px]">
                       <div className="p-6">
                         <div className="grid grid-cols-3 gap-4">
                           {projectTypes.map((project) => (
