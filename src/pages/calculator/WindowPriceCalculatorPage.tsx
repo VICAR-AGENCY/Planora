@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Link } from 'react-router-dom'
 import {
   Plus,
   Trash2,
@@ -15,6 +14,9 @@ import {
   ChevronDown,
   ChevronUp,
   Copy,
+  ShieldCheck,
+  Star,
+  Clock,
 } from 'lucide-react'
 import {
   calculateWindowPrice,
@@ -24,6 +26,7 @@ import {
 } from '@/lib/calculator/window-price'
 import { formatEUR } from '@/lib/utils/format'
 import { cn } from '@/lib/utils/cn'
+import { LeadCaptureModal } from '@/components/leads/LeadCaptureModal'
 
 const materialOptions = [
   { value: 'pvc', label: 'PVC', description: 'Betaalbaar & onderhoudsvriendelijk' },
@@ -268,6 +271,7 @@ function WindowCard({
 }
 
 export function WindowPriceCalculatorPage() {
+  const [leadModalOpen, setLeadModalOpen] = useState(false)
   const [windows, setWindows] = useState<WindowItem[]>([createDefaultWindow(1)])
   const [options, setOptions] = useState({
     includeInstallation: true,
@@ -498,17 +502,22 @@ export function WindowPriceCalculatorPage() {
                 </div>
 
                 {/* CTA */}
-                <Link
-                  to="/app/nieuw-project"
-                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary-600 px-6 py-4 text-sm font-semibold text-white hover:bg-primary-700 transition-colors shadow-lg shadow-primary-600/20"
-                >
-                  Ontvang exacte offertes
-                  <ArrowRight size={16} />
-                </Link>
-
-                <p className="text-xs text-center text-neutral-500">
-                  Ontvang binnen 48 uur tot 3 offertes van gecertificeerde installateurs
-                </p>
+                <div className="rounded-xl border border-primary-100 bg-primary-50/50 p-5">
+                  <p className="text-sm font-semibold text-neutral-900 mb-1">Wil je exacte prijzen van erkende vakmensen?</p>
+                  <p className="text-xs text-neutral-500 mb-4">Ontvang gratis en vrijblijvend offertes op maat.</p>
+                  <button
+                    onClick={() => setLeadModalOpen(true)}
+                    className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary-600 px-6 py-4 text-sm font-semibold text-white hover:bg-primary-700 transition-colors shadow-lg shadow-primary-600/20"
+                  >
+                    Ontvang gratis offertes
+                    <ArrowRight size={16} />
+                  </button>
+                  <div className="mt-3 flex flex-wrap items-center justify-center gap-3 text-xs text-neutral-500">
+                    <span className="flex items-center gap-1"><ShieldCheck size={12} className="text-green-500" />Gratis &amp; vrijblijvend</span>
+                    <span className="flex items-center gap-1"><Clock size={12} className="text-primary-500" />Reactie binnen 24u</span>
+                    <span className="flex items-center gap-1"><Star size={12} className="text-yellow-400 fill-yellow-400" />4.8/5 score</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -545,6 +554,13 @@ export function WindowPriceCalculatorPage() {
           </div>
         </div>
       </section>
+
+      <LeadCaptureModal
+        open={leadModalOpen}
+        onClose={() => setLeadModalOpen(false)}
+        projectType="ramen-deuren"
+        source="calculator_ramen_deuren"
+      />
     </>
   )
 }

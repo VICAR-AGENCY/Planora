@@ -7,6 +7,8 @@ import {
   ArrowRight,
   MapPin,
   Clock,
+  AlertCircle,
+  RefreshCw,
 } from 'lucide-react'
 import { cn } from '@/lib/utils/cn'
 import { useSupplier, useSupplierMatches, useSupplierStats } from '@/hooks/useSupplier'
@@ -34,14 +36,42 @@ export function SupplierDashboardPage() {
 
   return (
     <div className="space-y-8">
+      {/* Onboarding banner */}
+      {supplier && !supplier.onboarding_completed && (
+        <div className="flex items-start gap-4 rounded-2xl border border-amber-200 bg-amber-50 p-5">
+          <AlertCircle size={20} className="text-amber-500 shrink-0 mt-0.5" />
+          <div className="flex-1">
+            <p className="font-semibold text-amber-900">Jouw profiel is nog niet volledig</p>
+            <p className="mt-1 text-sm text-amber-700">
+              Vul je specialisaties, werkgebied en beschikbaarheid in zodat klanten je kunnen vinden.
+            </p>
+          </div>
+          <Link
+            to="/supplier/onboarding"
+            className="shrink-0 rounded-xl bg-amber-500 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-600 transition-colors"
+          >
+            Profiel voltooien
+          </Link>
+        </div>
+      )}
+
       {/* Welcome header */}
-      <div>
-        <h1 className="text-2xl font-bold text-neutral-900">
-          Welkom terug, {supplier?.company_name ?? 'Installateur'}
-        </h1>
-        <p className="mt-1 text-neutral-500">
-          Beheer je projecten, offertes en berichten op een plek.
-        </p>
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-neutral-900">
+            Welkom terug, {supplier?.company_name ?? 'Installateur'}
+          </h1>
+          <p className="mt-1 text-neutral-500">
+            Beheer je projecten, offertes en berichten op een plek.
+          </p>
+        </div>
+        <Link
+          to="/supplier/onboarding"
+          className="hidden sm:flex items-center gap-2 rounded-xl border border-neutral-200 bg-white px-4 py-2 text-sm font-medium text-neutral-600 hover:bg-neutral-50 transition-colors"
+        >
+          <RefreshCw size={14} />
+          Profiel bijwerken
+        </Link>
       </div>
 
       {/* Stats cards */}

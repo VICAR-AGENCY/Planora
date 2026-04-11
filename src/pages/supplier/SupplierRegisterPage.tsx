@@ -1,6 +1,6 @@
-import { useState, type FormEvent } from 'react'
+import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { signUpWithEmail } from '@/lib/supabase/auth'
+import { supabase } from '@/lib/supabase/client'
 
 export function SupplierRegisterPage() {
   const [companyName, setCompanyName] = useState('')
@@ -12,17 +12,52 @@ export function SupplierRegisterPage() {
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
 
-  const handleSubmit = async (e: FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
     setLoading(true)
-    const { error } = await signUpWithEmail(email, password)
-    setLoading(false)
-    if (error) {
-      setError(error.message)
-    } else {
-      navigate('/supplier/dashboard')
+
+    // 1. Sign up
+    const { error: signUpError } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { data: { full_name: contactName, display_name: contactName } },
+    })
+    if (signUpError) {
+      setError(signUpError.message)
+      setLoading(false)
+      return
     }
+
+    // 2. Immediately sign in to get an active session
+    const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({ email, password })
+    if (signInError || !signInData.user) {
+      setError('Account aangemaakt. Controleer je e-mail om te bevestigen, dan kan je inloggen.')
+      setLoading(false)
+      return
+    }
+
+    const userId = signInData.user.id
+
+    // 3. Create supplier record with active session
+    const { error: supplierError } = await supabase.from('suppliers').insert({
+      user_id: userId,
+      company_name: companyName,
+      contact_name: contactName,
+      email,
+      phone: phone || null,
+      active: true,
+      verified: false,
+    })
+
+    setLoading(false)
+
+    if (supplierError) {
+      setError(`Supplier fout: ${supplierError.message} (code: ${supplierError.code})`)
+      return
+    }
+
+    navigate('/supplier/onboarding')
   }
 
   return (

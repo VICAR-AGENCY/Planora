@@ -1,9 +1,13 @@
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { AnimatedTextCycle } from './AnimatedTextCycle'
 import { InteractiveHoverButton } from './InteractiveHoverButton'
+import { LeadCaptureModal } from '@/components/leads/LeadCaptureModal'
 
 export function AnimatedHero() {
+  const [modalOpen, setModalOpen] = useState(false)
+
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-primary-50 to-white">
       <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-28 lg:px-8">
@@ -34,8 +38,8 @@ export function AnimatedHero() {
             className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center"
             variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
           >
-            <InteractiveHoverButton asChild>
-              <Link to="/app/nieuw-project">Start je project</Link>
+            <InteractiveHoverButton onClick={() => setModalOpen(true)}>
+              Ontvang gratis offertes
             </InteractiveHoverButton>
             <Link
               to="/calculator/warmtepomp"
@@ -46,6 +50,12 @@ export function AnimatedHero() {
           </motion.div>
         </motion.div>
       </div>
+
+      <LeadCaptureModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        source="homepage_hero"
+      />
     </section>
   )
 }

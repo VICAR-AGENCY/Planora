@@ -13,6 +13,7 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils/cn'
 import { useSupplier, useUpdateSupplier } from '@/hooks/useSupplier'
+import { DeleteAccountSection } from '@/components/profile/DeleteAccountSection'
 
 const allRegions = [
   'Antwerpen',
@@ -285,6 +286,10 @@ export function SupplierProfilePage() {
             Er ging iets mis. Probeer opnieuw.
           </span>
         )}
+      </div>
+
+      <div className="mt-8 border-t border-neutral-100 pt-8">
+        <DeleteAccountSection />
       </div>
     </div>
   )

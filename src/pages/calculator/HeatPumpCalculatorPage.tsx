@@ -150,7 +150,7 @@ export function HeatPumpCalculatorPage() {
               )}
 
               {currentStep === 4 && (
-                <CalculatorResults estimate={estimate} premium={premium} />
+                <CalculatorResults estimate={estimate} premium={premium} projectType="warmtepomp" source="calculator_warmtepomp" />
               )}
             </motion.div>
           </AnimatePresence>

@@ -1,7 +1,8 @@
 import { Link, useLocation } from 'react-router-dom'
-import { Menu, X, ChevronDown, Flame, Square, Home, Users, ChevronRight } from 'lucide-react'
+import { Menu, X, ChevronDown, Flame, Square, Home, Users, ChevronRight, User } from 'lucide-react'
 import { useState } from 'react'
 import { useAuth } from '@/hooks/useAuth'
+import { useSupplier } from '@/hooks/useSupplier'
 import { cn } from '@/lib/utils/cn'
 
 const projectTypes = [
@@ -64,7 +65,9 @@ export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [megaMenuOpen, setMegaMenuOpen] = useState(false)
   const { isAuthenticated } = useAuth()
+  const { data: supplier } = useSupplier()
   const { pathname } = useLocation()
+  const dashboardTo = supplier ? '/supplier/dashboard' : '/app/dashboard'
 
   return (
     <header className="border-b border-primary-100 bg-white/80 backdrop-blur-sm sticky top-0 z-50">
@@ -161,12 +164,21 @@ export function Header() {
         {/* Desktop right */}
         <div className="hidden items-center gap-3 lg:flex">
           {isAuthenticated ? (
-            <Link
-              to="/app/dashboard"
-              className="rounded-xl bg-primary-600 px-5 py-2 text-sm font-medium text-white hover:bg-primary-700 transition-colors"
-            >
-              Dashboard
-            </Link>
+            <div className="flex items-center gap-2">
+              <Link
+                to={dashboardTo}
+                className="rounded-xl bg-primary-600 px-5 py-2 text-sm font-medium text-white hover:bg-primary-700 transition-colors"
+              >
+                Dashboard
+              </Link>
+              <Link
+                to="/app/profiel"
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-neutral-100 hover:bg-neutral-200 transition-colors"
+                aria-label="Profiel"
+              >
+                <User size={18} className="text-neutral-600" />
+              </Link>
+            </div>
           ) : (
             <>
               <Link

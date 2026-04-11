@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import { Triangle, Square, Ruler, Home, Layers, Shield, Wind, AlertCircle, ArrowLeft, ArrowRight } from 'lucide-react'
+import { Triangle, Square, Ruler, Home, Layers, Shield, Wind, AlertCircle, ArrowLeft, ArrowRight, ShieldCheck, Star, Clock } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Link } from 'react-router-dom'
 import { calculateRoofInsulation, type RoofInsulationInput } from '@/lib/calculator/roof-insulation'
+import { LeadCaptureModal } from '@/components/leads/LeadCaptureModal'
 import { CalculatorStepCards } from '@/components/calculator/CalculatorStepCards'
 import { formatEUR } from '@/lib/utils/format'
 
@@ -32,6 +32,7 @@ const currentInsulationOptions = [
 ]
 
 export function RoofInsulationCalculatorPage() {
+  const [leadModalOpen, setLeadModalOpen] = useState(false)
   const [currentStep, setCurrentStep] = useState(0)
   const [input, setInput] = useState<RoofInsulationInput>({
     roofType: 'pitched',
@@ -210,13 +211,22 @@ export function RoofInsulationCalculatorPage() {
                   </div>
 
                   {/* CTA */}
-                  <Link
-                    to="/app/nieuw-project"
-                    className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary-600 px-6 py-3.5 text-sm font-semibold text-white hover:bg-primary-700 transition-colors shadow-lg shadow-primary-600/20"
-                  >
-                    Wil je exactere prijzen? Start je project
-                    <ArrowRight size={16} />
-                  </Link>
+                  <div className="rounded-xl border border-primary-100 bg-primary-50/50 p-5">
+                    <p className="text-sm font-semibold text-neutral-900 mb-1">Wil je exacte prijzen van erkende vakmensen?</p>
+                    <p className="text-xs text-neutral-500 mb-4">Ontvang gratis en vrijblijvend offertes op maat.</p>
+                    <button
+                      onClick={() => setLeadModalOpen(true)}
+                      className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary-600 px-6 py-3.5 text-sm font-semibold text-white hover:bg-primary-700 transition-colors shadow-lg shadow-primary-600/20"
+                    >
+                      Ontvang gratis offertes
+                      <ArrowRight size={16} />
+                    </button>
+                    <div className="mt-3 flex flex-wrap items-center justify-center gap-3 text-xs text-neutral-500">
+                      <span className="flex items-center gap-1"><ShieldCheck size={12} className="text-green-500" />Gratis &amp; vrijblijvend</span>
+                      <span className="flex items-center gap-1"><Clock size={12} className="text-primary-500" />Reactie binnen 24u</span>
+                      <span className="flex items-center gap-1"><Star size={12} className="text-yellow-400 fill-yellow-400" />4.8/5 score</span>
+                    </div>
+                  </div>
                 </motion.div>
               )}
             </motion.div>
@@ -244,6 +254,13 @@ export function RoofInsulationCalculatorPage() {
           </div>
         </div>
       </section>
+
+      <LeadCaptureModal
+        open={leadModalOpen}
+        onClose={() => setLeadModalOpen(false)}
+        projectType="dakisolatie"
+        source="calculator_dakisolatie"
+      />
     </>
   )
 }

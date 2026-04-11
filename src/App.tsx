@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { PublicLayout } from '@/components/layout/PublicLayout'
 import { AppLayout } from '@/components/layout/AppLayout'
 import { SupplierLayout } from '@/components/layout/SupplierLayout'
+import { AdminLayout } from '@/components/layout/AdminLayout'
 
 // Public pages
 import { HomePage } from '@/pages/marketing/HomePage'
@@ -43,6 +44,7 @@ import { SupplierDashboardPage } from '@/pages/supplier/SupplierDashboardPage'
 import { SupplierProjectDetailPage } from '@/pages/supplier/SupplierProjectDetailPage'
 import { SupplierQuotesPage } from '@/pages/supplier/SupplierQuotesPage'
 import { SupplierProfilePage } from '@/pages/supplier/SupplierProfilePage'
+import { SupplierOnboardingPage } from '@/pages/supplier/SupplierOnboardingPage'
 
 // Consumer app pages
 import { IntakePage } from '@/pages/intake/IntakePage'
@@ -51,6 +53,11 @@ import { ProjectDetailPage } from '@/pages/dashboard/ProjectDetailPage'
 import { QuoteComparisonPage } from '@/pages/dashboard/QuoteComparisonPage'
 import { MessagesPage } from '@/pages/messages/MessagesPage'
 import { ProfilePage } from '@/pages/profile/ProfilePage'
+
+// Admin pages
+import { AdminLoginPage } from '@/pages/admin/AdminLoginPage'
+import { AdminDashboardPage } from '@/pages/admin/AdminDashboardPage'
+import { AdminUsersPage } from '@/pages/admin/AdminUsersPage'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -93,6 +100,7 @@ export default function App() {
           <Route path="/auth/callback" element={<CallbackPage />} />
           <Route path="/supplier/login" element={<SupplierLoginPage />} />
           <Route path="/supplier/registreren" element={<SupplierRegisterPage />} />
+          <Route path="/supplier/onboarding" element={<SupplierOnboardingPage />} />
 
           {/* Supplier Dashboard (protected, role: supplier) */}
           <Route element={<SupplierLayout />}>
@@ -112,6 +120,13 @@ export default function App() {
             <Route path="/app/project/:id/offertes" element={<QuoteComparisonPage />} />
             <Route path="/app/berichten" element={<MessagesPage />} />
             <Route path="/app/profiel" element={<ProfilePage />} />
+          </Route>
+
+          {/* Admin (protected, role: admin) */}
+          <Route path="/admin/login" element={<AdminLoginPage />} />
+          <Route element={<AdminLayout />}>
+            <Route path="/admin" element={<AdminDashboardPage />} />
+            <Route path="/admin/gebruikers" element={<AdminUsersPage />} />
           </Route>
         </Routes>
       </BrowserRouter>

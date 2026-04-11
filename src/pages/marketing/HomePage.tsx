@@ -1,10 +1,12 @@
 import { Link } from 'react-router-dom'
 import { ArrowRight, Calculator, Flame, DoorOpen, Home } from 'lucide-react'
+import { useState } from 'react'
 import { AnimatedHero } from '@/components/animated/AnimatedHero'
 import { ScrollVelocityText } from '@/components/animated/ScrollVelocityText'
 import { MatchingAnimation } from '@/components/animated/MatchingAnimation'
 import { LogoCarousel } from '@/components/animated/LogoCarousel'
 import { FeatureGrid } from '@/components/marketing/FeatureGrid'
+import { LeadCaptureModal } from '@/components/leads/LeadCaptureModal'
 import { motion } from 'framer-motion'
 
 const categories = [
@@ -56,6 +58,8 @@ const calculators = [
 ]
 
 export function HomePage() {
+  const [modalOpen, setModalOpen] = useState(false)
+
   return (
     <>
       <AnimatedHero />
@@ -270,13 +274,13 @@ export function HomePage() {
             Begin vandaag met je woningproject. Gratis, vrijblijvend en binnen 5 minuten je eerste kostenraming.
           </p>
           <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-            <Link
-              to="/app/nieuw-project"
+            <button
+              onClick={() => setModalOpen(true)}
               className="flex items-center gap-2 rounded-xl bg-white px-8 py-4 text-base font-semibold text-primary-700 shadow-lg hover:bg-primary-50 transition-colors"
             >
-              Start je project
+              Ontvang gratis offertes
               <ArrowRight size={18} />
-            </Link>
+            </button>
             <Link
               to="/calculator/warmtepomp"
               className="flex items-center gap-2 rounded-xl border border-white/30 px-8 py-4 text-base font-semibold text-white hover:bg-white/10 transition-colors"
@@ -287,6 +291,12 @@ export function HomePage() {
           </div>
         </div>
       </section>
+
+      <LeadCaptureModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        source="homepage_cta"
+      />
     </>
   )
 }

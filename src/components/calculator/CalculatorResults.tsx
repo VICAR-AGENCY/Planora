@@ -1,7 +1,8 @@
-import { Link } from 'react-router-dom'
-import { ArrowRight } from 'lucide-react'
+import { useState } from 'react'
+import { ArrowRight, ShieldCheck, Star, Clock } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { formatEUR } from '@/lib/utils/format'
+import { LeadCaptureModal } from '@/components/leads/LeadCaptureModal'
 
 interface CalculatorResultsProps {
   estimate: {
@@ -15,10 +16,22 @@ interface CalculatorResultsProps {
   premium: {
     totalPremium: number
   }
+  projectType?: string
+  source?: string
 }
 
-export function CalculatorResults({ estimate, premium }: CalculatorResultsProps) {
+export function CalculatorResults({ estimate, premium, projectType, source }: CalculatorResultsProps) {
+  const [modalOpen, setModalOpen] = useState(false)
+
+  const calculatorData = {
+    totalCost: estimate.totalCost,
+    annualSavings: estimate.annualSavings,
+    paybackYears: estimate.paybackYears,
+    premium: premium.totalPremium,
+  }
+
   return (
+    <>
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -78,13 +91,44 @@ export function CalculatorResults({ estimate, premium }: CalculatorResultsProps)
       </div>
 
       {/* CTA */}
-      <Link
-        to="/app/nieuw-project"
-        className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary-600 px-6 py-3.5 text-sm font-semibold text-white hover:bg-primary-700 transition-colors shadow-lg shadow-primary-600/20"
-      >
-        Wil je exactere prijzen? Start je project
-        <ArrowRight size={16} />
-      </Link>
+      <div className="rounded-xl border border-primary-100 bg-primary-50/50 p-5">
+        <p className="text-sm font-semibold text-neutral-900 mb-1">
+          Wil je exacte prijzen van erkende vakmensen?
+        </p>
+        <p className="text-xs text-neutral-500 mb-4">
+          Ontvang gratis en vrijblijvend offertes op maat voor jouw situatie.
+        </p>
+        <button
+          onClick={() => setModalOpen(true)}
+          className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary-600 px-6 py-3.5 text-sm font-semibold text-white hover:bg-primary-700 transition-colors shadow-lg shadow-primary-600/20"
+        >
+          Ontvang gratis offertes
+          <ArrowRight size={16} />
+        </button>
+        <div className="mt-3 flex flex-wrap items-center justify-center gap-3 text-xs text-neutral-500">
+          <span className="flex items-center gap-1">
+            <ShieldCheck size={12} className="text-green-500" />
+            Gratis &amp; vrijblijvend
+          </span>
+          <span className="flex items-center gap-1">
+            <Clock size={12} className="text-primary-500" />
+            Reactie binnen 24u
+          </span>
+          <span className="flex items-center gap-1">
+            <Star size={12} className="text-yellow-400 fill-yellow-400" />
+            4.8/5 score
+          </span>
+        </div>
+      </div>
     </motion.div>
+
+    <LeadCaptureModal
+      open={modalOpen}
+      onClose={() => setModalOpen(false)}
+      projectType={projectType}
+      source={source ?? 'calculator_results'}
+      calculatorData={calculatorData}
+    />
+    </>
   )
 }

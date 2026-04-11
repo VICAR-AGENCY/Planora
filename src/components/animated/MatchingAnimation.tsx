@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect, useCallback } from 'react'
 import { motion, useInView, AnimatePresence } from 'framer-motion'
-import { MessageSquare, Search, FileCheck, ThumbsUp, ArrowRight } from 'lucide-react'
+import { MessageSquare, Search, FileCheck, ThumbsUp, ArrowRight, Thermometer, Home, LayoutGrid } from 'lucide-react'
 import { cn } from '@/lib/utils/cn'
 
 /* ── step config ── */
@@ -12,9 +12,9 @@ const steps = [
 ]
 
 const projects = [
-  { name: 'Warmtepomp installatie', city: 'Antwerpen', type: 'Lucht-water', emoji: '🔥' },
-  { name: 'Dakisolatie', city: 'Gent', type: 'Sarking methode', emoji: '🏠' },
-  { name: 'Nieuwe ramen', city: 'Brugge', type: 'PVC driedubbel glas', emoji: '🪟' },
+  { name: 'Warmtepomp installatie', city: 'Antwerpen', type: 'Lucht-water', icon: Thermometer },
+  { name: 'Dakisolatie', city: 'Gent', type: 'Sarking methode', icon: Home },
+  { name: 'Nieuwe ramen', city: 'Brugge', type: 'PVC driedubbel glas', icon: LayoutGrid },
 ]
 
 const suppliers = [
@@ -209,7 +209,12 @@ export function MatchingAnimation() {
                           transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
                         >
                           <div className="flex items-center gap-3">
-                            <span className="text-2xl">{p.emoji}</span>
+                            <div className={cn(
+                              'flex h-9 w-9 shrink-0 items-center justify-center rounded-xl transition-colors duration-500',
+                              isActive ? 'bg-primary-700 text-white' : 'bg-primary-100 text-primary-600'
+                            )}>
+                              <p.icon size={18} />
+                            </div>
                             <div>
                               <p className="font-bold text-neutral-900">{p.name}</p>
                               <p className="text-sm text-neutral-500">{p.city} — {p.type}</p>
@@ -234,7 +239,7 @@ export function MatchingAnimation() {
                         transition={{ duration: 0.7, ease: [0.4, 0, 0.2, 1] }}
                       >
                         <p className="text-xs font-bold text-primary-700 whitespace-nowrap">
-                          {projects[activeIdx].emoji} {projects[activeIdx].name}
+                          {projects[activeIdx].name}
                         </p>
                       </motion.div>
                     )}

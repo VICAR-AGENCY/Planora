@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { ArrowRight, ChevronDown, type LucideIcon } from 'lucide-react'
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { LeadCaptureModal } from '@/components/leads/LeadCaptureModal'
 
 export interface CategoryConfig {
   slug: string
@@ -17,6 +18,8 @@ export interface CategoryConfig {
 }
 
 export function CategoryLandingPage({ config }: { config: CategoryConfig }) {
+  const [modalOpen, setModalOpen] = useState(false)
+
   return (
     <>
       {/* Hero */}
@@ -33,13 +36,13 @@ export function CategoryLandingPage({ config }: { config: CategoryConfig }) {
             {config.description}
           </p>
           <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-            <Link
-              to="/app/nieuw-project"
+            <button
+              onClick={() => setModalOpen(true)}
               className="flex items-center gap-2 rounded-xl bg-primary-600 px-8 py-3.5 text-base font-semibold text-white shadow-lg shadow-primary-600/25 hover:bg-primary-700 transition-colors"
             >
-              Start je project
+              Ontvang gratis offertes
               <ArrowRight size={18} />
-            </Link>
+            </button>
             {config.calculatorLink && (
               <Link
                 to={config.calculatorLink}
@@ -104,15 +107,22 @@ export function CategoryLandingPage({ config }: { config: CategoryConfig }) {
           <p className="mt-4 text-lg text-primary-200">
             Krijg gratis en vrijblijvend advies voor jouw project.
           </p>
-          <Link
-            to="/app/nieuw-project"
+          <button
+            onClick={() => setModalOpen(true)}
             className="mt-8 inline-flex items-center gap-2 rounded-xl bg-white px-8 py-3.5 text-base font-semibold text-primary-700 shadow-lg hover:bg-primary-50 transition-colors"
           >
-            Start je project
+            Ontvang gratis offertes
             <ArrowRight size={18} />
-          </Link>
+          </button>
         </div>
       </section>
+
+      <LeadCaptureModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        projectType={config.slug}
+        source={`category_${config.slug}`}
+      />
     </>
   )
 }
