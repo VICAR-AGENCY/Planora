@@ -140,12 +140,7 @@ export function StepWerkgebied({ data, onChange }: Props) {
     return REGIONS.find((r) => r.id === regionId)!.provinces.every(isProvinceFull)
   }
 
-  function isRegionPartial(regionId: string) {
-    const reg = REGIONS.find((r) => r.id === regionId)!
-    return reg.provinces.some((p) => isProvinceFull(p) || isProvincePartial(p)) && !isRegionFull(regionId)
-  }
-
-  // ── Toggle actions ─────────────────────────────────────────────────────────
+// ── Toggle actions ─────────────────────────────────────────────────────────
 
   function toggleCity(city: City) {
     if (isCitySelected(city.prefix)) {
