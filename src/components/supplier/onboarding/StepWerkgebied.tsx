@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { X, ChevronDown, ChevronRight, Check, CheckSquare, Square } from 'lucide-react'
+import { X, ChevronRight, Check, CheckSquare, Square } from 'lucide-react'
 import { cn } from '@/lib/utils/cn'
 import type { OnboardingData } from './types'
 import { BelgiumMap, PROVINCES, type CityPin } from './BelgiumMap'
@@ -284,8 +284,6 @@ export function StepWerkgebied({ data, onChange }: Props) {
 
           <div className="flex-1 overflow-y-auto divide-y divide-neutral-100" style={{ maxHeight: 460 }}>
             {REGIONS.map((reg) => {
-              const regFull = isRegionFull(reg.id)
-              const regPartial = isRegionPartial(reg.id)
               const regCount = reg.provinces.reduce(
                 (sum, p) => sum + cities(p).filter((c) => isCitySelected(c.prefix)).length, 0
               )
