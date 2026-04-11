@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { signInWithEmail, signInWithGoogle } from '@/lib/supabase/auth'
+import { signInWithEmail, signInWithGoogle, resetPasswordForEmail } from '@/lib/supabase/auth'
 import { supabase } from '@/lib/supabase/client'
 
 export function LoginPage() {
@@ -8,7 +8,19 @@ export function LoginPage() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [showForgot, setShowForgot] = useState(false)
+  const [forgotEmail, setForgotEmail] = useState('')
+  const [forgotSent, setForgotSent] = useState(false)
+  const [forgotLoading, setForgotLoading] = useState(false)
   const navigate = useNavigate()
+
+  const handleForgot = async (e: FormEvent) => {
+    e.preventDefault()
+    setForgotLoading(true)
+    await resetPasswordForEmail(forgotEmail)
+    setForgotLoading(false)
+    setForgotSent(true)
+  }
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
@@ -70,7 +82,7 @@ export function LoginPage() {
             <div>
               <div className="flex items-center justify-between">
                 <label htmlFor="password" className="block text-sm font-medium text-neutral-700">Wachtwoord</label>
-                <button type="button" className="text-xs text-primary-600 hover:text-primary-700">
+                <button type="button" onClick={() => { setShowForgot(true); setForgotEmail(email) }} className="text-xs text-primary-600 hover:text-primary-700">
                   Vergeten?
                 </button>
               </div>
@@ -122,6 +134,47 @@ export function LoginPage() {
           </p>
         </div>
       </div>
+
+      {/* Wachtwoord vergeten overlay */}
+      {showForgot && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+          <div className="w-full max-w-sm rounded-2xl bg-white p-8 shadow-2xl">
+            {forgotSent ? (
+              <div className="text-center">
+                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
+                  <svg className="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                </div>
+                <h2 className="text-lg font-bold text-neutral-900">Herstelmail verstuurd</h2>
+                <p className="mt-2 text-sm text-neutral-500">Controleer je inbox voor <strong>{forgotEmail}</strong> en klik op de link om je wachtwoord te resetten.</p>
+                <button onClick={() => { setShowForgot(false); setForgotSent(false) }} className="mt-6 w-full rounded-xl bg-primary-600 py-2.5 text-sm font-semibold text-white hover:bg-primary-700 transition-colors">
+                  Sluiten
+                </button>
+              </div>
+            ) : (
+              <>
+                <h2 className="text-lg font-bold text-neutral-900">Wachtwoord vergeten</h2>
+                <p className="mt-1 text-sm text-neutral-500">Vul je e-mailadres in en we sturen je een herstellink.</p>
+                <form onSubmit={handleForgot} className="mt-5 space-y-4">
+                  <input
+                    type="email"
+                    value={forgotEmail}
+                    onChange={(e) => setForgotEmail(e.target.value)}
+                    required
+                    placeholder="jouw@email.be"
+                    className="w-full rounded-xl border border-neutral-300 px-4 py-2.5 text-sm focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
+                  />
+                  <button type="submit" disabled={forgotLoading} className="w-full rounded-xl bg-primary-600 py-2.5 text-sm font-semibold text-white hover:bg-primary-700 disabled:opacity-50 transition-colors">
+                    {forgotLoading ? 'Bezig...' : 'Stuur herstelmail'}
+                  </button>
+                  <button type="button" onClick={() => setShowForgot(false)} className="w-full rounded-xl border border-neutral-200 py-2.5 text-sm font-medium text-neutral-600 hover:bg-neutral-50 transition-colors">
+                    Annuleren
+                  </button>
+                </form>
+              </>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Right — gradient panel (hidden on mobile) */}
       <div className="hidden bg-gradient-to-br from-primary-600 to-primary-800 lg:flex lg:flex-1 lg:items-center lg:justify-center">

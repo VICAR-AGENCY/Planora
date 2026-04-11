@@ -29,6 +29,12 @@ export async function signOut() {
   return supabase.auth.signOut()
 }
 
+export async function resetPasswordForEmail(email: string) {
+  return supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${window.location.origin}/auth/callback`,
+  })
+}
+
 export function onAuthStateChange(callback: Parameters<typeof supabase.auth.onAuthStateChange>[0]) {
   return supabase.auth.onAuthStateChange(callback)
 }

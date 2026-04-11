@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { supabase } from '@/lib/supabase/client'
+import { Mail, CheckCircle2 } from 'lucide-react'
 
 export function SupplierRegisterPage() {
   const [companyName, setCompanyName] = useState('')
@@ -10,54 +11,84 @@ export function SupplierRegisterPage() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-  const navigate = useNavigate()
+  const [sent, setSent] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
     setLoading(true)
 
-    // 1. Sign up
-    const { error: signUpError } = await supabase.auth.signUp({
-      email,
-      password,
-      options: { data: { full_name: contactName, display_name: contactName } },
-    })
-    if (signUpError) {
-      setError(signUpError.message)
-      setLoading(false)
-      return
-    }
-
-    // 2. Immediately sign in to get an active session
-    const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({ email, password })
-    if (signInError || !signInData.user) {
-      setError('Account aangemaakt. Controleer je e-mail om te bevestigen, dan kan je inloggen.')
-      setLoading(false)
-      return
-    }
-
-    const userId = signInData.user.id
-
-    // 3. Create supplier record with active session
-    const { error: supplierError } = await supabase.from('suppliers').insert({
-      user_id: userId,
+    // Sla bedrijfsdata op in localStorage — wordt uitgelezen na email confirmatie
+    localStorage.setItem('supplier_pending', JSON.stringify({
       company_name: companyName,
       contact_name: contactName,
       email,
       phone: phone || null,
-      active: true,
-      verified: false,
+    }))
+
+    const { error: signUpError } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { full_name: contactName, display_name: contactName },
+        emailRedirectTo: `${window.location.origin}/auth/callback?role=supplier`,
+      },
     })
 
     setLoading(false)
 
-    if (supplierError) {
-      setError(`Supplier fout: ${supplierError.message} (code: ${supplierError.code})`)
+    if (signUpError) {
+      localStorage.removeItem('supplier_pending')
+      setError(signUpError.message)
       return
     }
 
-    navigate('/supplier/onboarding')
+    setSent(true)
+  }
+
+  if (sent) {
+    return (
+      <div className="flex min-h-screen">
+        <div className="flex flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+          <div className="mx-auto w-full max-w-sm text-center">
+            <Link to="/" className="inline-block mb-8">
+              <img src="/logo.png" alt="Planora" className="h-8" />
+            </Link>
+            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary-100 mx-auto mb-6">
+              <Mail size={32} className="text-primary-600" />
+            </div>
+            <h1 className="text-2xl font-bold text-neutral-900">Bevestig je e-mail</h1>
+            <p className="mt-3 text-sm text-neutral-500">
+              We stuurden een bevestigingslink naar <strong>{email}</strong>. Klik op de link om je account te activeren en je bedrijfsprofiel aan te maken.
+            </p>
+            <div className="mt-6 rounded-xl bg-primary-50 border border-primary-100 px-5 py-4 text-left space-y-2">
+              {['Klik op de link in je e-mail', 'Je bedrijfsprofiel wordt automatisch aangemaakt', 'Vervolgens stel je je werkgebied en specialisaties in'].map((step, i) => (
+                <div key={i} className="flex items-start gap-2.5 text-sm text-primary-700">
+                  <CheckCircle2 size={16} className="mt-0.5 shrink-0 text-primary-500" />
+                  {step}
+                </div>
+              ))}
+            </div>
+            <p className="mt-8 text-xs text-neutral-400">
+              Geen e-mail ontvangen?{' '}
+              <button
+                onClick={() => setSent(false)}
+                className="text-primary-600 hover:text-primary-700 font-medium"
+              >
+                Probeer opnieuw
+              </button>
+            </p>
+          </div>
+        </div>
+        <div className="hidden bg-gradient-to-br from-primary-700 to-primary-900 lg:flex lg:flex-1 lg:items-center lg:justify-center">
+          <div className="max-w-md text-center px-8">
+            <img src="/icon-white.png" alt="" className="mx-auto h-16 mb-8 opacity-80" />
+            <h2 className="text-2xl font-bold text-white">Bijna klaar!</h2>
+            <p className="mt-4 text-primary-300">Bevestig je e-mail en je bent direct aan de slag als Planora partner.</p>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -114,7 +145,9 @@ export function SupplierRegisterPage() {
               />
             </div>
             <div>
-              <label htmlFor="phone" className="block text-sm font-medium text-neutral-700">Telefoon</label>
+              <label htmlFor="phone" className="block text-sm font-medium text-neutral-700">
+                Telefoon <span className="text-neutral-400 font-normal">(optioneel)</span>
+              </label>
               <input
                 id="phone"
                 type="tel"
@@ -164,18 +197,12 @@ export function SupplierRegisterPage() {
             Ontvang kwalitatieve projectaanvragen, beheer offertes en groei je bedrijf. 100% gratis registreren.
           </p>
           <div className="mt-8 space-y-3 text-left">
-            <div className="flex items-center gap-3 text-primary-200">
-              <svg className="h-5 w-5 text-accent-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
-              Geen registratiekosten
-            </div>
-            <div className="flex items-center gap-3 text-primary-200">
-              <svg className="h-5 w-5 text-accent-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
-              Alleen relevante leads
-            </div>
-            <div className="flex items-center gap-3 text-primary-200">
-              <svg className="h-5 w-5 text-accent-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
-              Gratis offertebeheer dashboard
-            </div>
+            {['Geen registratiekosten', 'Alleen relevante leads', 'Gratis offertebeheer dashboard'].map((item) => (
+              <div key={item} className="flex items-center gap-3 text-primary-200">
+                <svg className="h-5 w-5 text-accent-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                {item}
+              </div>
+            ))}
           </div>
         </div>
       </div>

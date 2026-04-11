@@ -6,9 +6,62 @@ export function CallbackPage() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      navigate(session ? '/app/dashboard' : '/login', { replace: true })
-    })
+    const handle = async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+
+      if (!session) {
+        navigate('/login', { replace: true })
+        return
+      }
+
+      const userId = session.user.id
+      const params = new URLSearchParams(window.location.search)
+      const role = params.get('role')
+
+      // Supplier email confirmatie callback
+      if (role === 'supplier') {
+        const pending = localStorage.getItem('supplier_pending')
+        if (pending) {
+          try {
+            const { company_name, contact_name, email, phone } = JSON.parse(pending)
+
+            // Maak supplier record aan
+            await supabase.from('suppliers').insert({
+              user_id: userId,
+              company_name: company_name ?? '',
+              contact_name: contact_name ?? '',
+              email: email ?? session.user.email ?? '',
+              phone: phone ?? null,
+              active: true,
+              verified: false,
+            })
+
+            // Update profile role
+            await supabase.from('profiles').update({ role: 'supplier' }).eq('id', userId)
+
+            localStorage.removeItem('supplier_pending')
+          } catch {
+            // Als insert faalt (bijv. duplicate), ga toch door
+          }
+        } else {
+          // Geen pending data maar role=supplier → update role wel
+          await supabase.from('profiles').update({ role: 'supplier' }).eq('id', userId)
+        }
+        navigate('/supplier/onboarding', { replace: true })
+        return
+      }
+
+      // Normale flow: check of user een supplier record heeft
+      const { data: supplier } = await supabase
+        .from('suppliers')
+        .select('id')
+        .eq('user_id', userId)
+        .maybeSingle()
+
+      navigate(supplier ? '/supplier/dashboard' : '/app/dashboard', { replace: true })
+    }
+
+    handle()
   }, [navigate])
 
   return (
