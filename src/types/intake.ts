@@ -8,24 +8,31 @@ export interface IntakeMessage {
   timestamp: number
 }
 
-export interface IntakeState {
-  messages: IntakeMessage[]
-  isLoading: boolean
-  projectData: Partial<IntakeProjectData>
-  step: IntakeStep
-}
+export type IntakeStep =
+  | 'category'
+  | 'property_type'
+  | 'surface'
+  | 'insulation'
+  | 'location'
+  | 'budget'
+  | 'timeline'
+  | 'summary'
 
 export interface IntakeProjectData {
-  property_type: string
-  current_heating: string
-  desired_system: string
+  category: string         // 'warmtepomp' | 'ramen_deuren' | 'dakisolatie'
+  property_type: string    // 'vrijstaand' | 'halfopen' | 'rijwoning' | 'appartement'
   surface_area: number
-  insulation_level: string
-  budget_range: { min: number; max: number }
-  timeline: string
+  insulation_level: string // 'goed' | 'gemiddeld' | 'slecht'
+  budget_range: string     // '<10000' | '10000-15000' | '15000-25000' | '>25000'
+  timeline: string         // 'zo_snel_mogelijk' | 'dit_jaar' | 'volgend_jaar' | 'nog_niet_zeker'
   city: string
   postal_code: string
+  lat?: number
+  lon?: number
   photos: string[]
 }
 
-export type IntakeStep = 'greeting' | 'property' | 'heating' | 'preferences' | 'budget' | 'summary' | 'confirmed'
+export interface IntakeState {
+  projectData: Partial<IntakeProjectData>
+  step: IntakeStep
+}

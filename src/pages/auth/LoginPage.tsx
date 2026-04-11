@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { signInWithEmail, signInWithGoogle } from '@/lib/supabase/auth'
+import { supabase } from '@/lib/supabase/client'
 
 export function LoginPage() {
   const [email, setEmail] = useState('')
@@ -14,12 +15,28 @@ export function LoginPage() {
     setError('')
     setLoading(true)
     const { error } = await signInWithEmail(email, password)
-    setLoading(false)
     if (error) {
       setError(error.message)
-    } else {
-      navigate('/app/dashboard')
+      setLoading(false)
+      return
     }
+
+    // Check if this user has a supplier record → stuur naar supplier dashboard
+    const { data: { user } } = await supabase.auth.getUser()
+    if (user) {
+      const { data: supplier } = await supabase
+        .from('suppliers')
+        .select('id')
+        .eq('user_id', user.id)
+        .maybeSingle()
+      if (supplier) {
+        navigate('/supplier/dashboard')
+        return
+      }
+    }
+
+    setLoading(false)
+    navigate('/app/dashboard')
   }
 
   return (

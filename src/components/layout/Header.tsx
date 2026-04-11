@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
-import { Menu, X, ChevronDown, Flame, Square, Home, Users, ChevronRight, User } from 'lucide-react'
+import { Menu, X, ChevronDown, Flame, Square, Home, Users, ChevronRight, User, HardHat, LayoutDashboard, FolderOpen, FileText, MessageSquare, UserCircle } from 'lucide-react'
 import { useState } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import { useSupplier } from '@/hooks/useSupplier'
@@ -70,7 +70,8 @@ export function Header() {
   const dashboardTo = supplier ? '/supplier/dashboard' : '/app/dashboard'
 
   return (
-    <header className="border-b border-primary-100 bg-white/80 backdrop-blur-sm sticky top-0 z-50">
+    <>
+    <header className="border-b border-primary-100 bg-white/95 backdrop-blur-sm sticky top-0 z-50">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link to="/" className="shrink-0">
           <img src="/logo.png" alt="Planora" className="h-8" />
@@ -176,7 +177,10 @@ export function Header() {
                 className="flex h-9 w-9 items-center justify-center rounded-full bg-neutral-100 hover:bg-neutral-200 transition-colors"
                 aria-label="Profiel"
               >
-                <User size={18} className="text-neutral-600" />
+                {supplier
+                  ? <HardHat size={18} className="text-neutral-600" />
+                  : <User size={18} className="text-neutral-600" />
+                }
               </Link>
             </div>
           ) : (
@@ -293,6 +297,47 @@ export function Header() {
           </div>
         </nav>
       )}
+
     </header>
+
+      {/* Supplier subheader — buiten <header> zodat backdrop-blur werkt */}
+      {supplier && (
+        <div className="sticky top-16 z-40 border-b border-primary-200 bg-primary-50/95 backdrop-blur-md">
+          <div className="flex h-12 items-center justify-center px-4">
+            <nav className="flex items-center gap-1">
+              <span className="mr-4 flex items-center gap-1.5 text-xs font-semibold text-primary-400">
+                <HardHat size={13} />
+                Vakman
+              </span>
+              {[
+                { label: 'Dashboard', to: '/supplier/dashboard', icon: LayoutDashboard },
+                { label: 'Projecten', to: '/supplier/projecten', icon: FolderOpen },
+                { label: 'Offertes', to: '/supplier/offertes', icon: FileText },
+                { label: 'Berichten', to: '/supplier/berichten', icon: MessageSquare },
+                { label: 'Profiel', to: '/supplier/profiel', icon: UserCircle },
+              ].map((item) => {
+                const Icon = item.icon
+                const isActive = pathname.startsWith(item.to)
+                return (
+                  <Link
+                    key={item.to}
+                    to={item.to}
+                    className={cn(
+                      'flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-medium transition-colors',
+                      isActive
+                        ? 'bg-primary-200 text-primary-800'
+                        : 'text-primary-600 hover:bg-primary-100 hover:text-primary-800'
+                    )}
+                  >
+                    <Icon size={14} />
+                    {item.label}
+                  </Link>
+                )
+              })}
+            </nav>
+          </div>
+        </div>
+      )}
+    </>
   )
 }

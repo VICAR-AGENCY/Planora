@@ -1,131 +1,134 @@
-import { useEffect, useRef } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ChatMessage } from '@/components/intake/ChatMessage'
-import { ChatInput } from '@/components/intake/ChatInput'
-import { useAIChat } from '@/hooks/useAIChat'
+import { StepView } from '@/components/intake/StepView'
 import { useIntakeStore } from '@/stores/intake-store'
+import { useAuthStore } from '@/stores/auth-store'
 import { useCreateProject } from '@/hooks/useProject'
+import type { IntakeProjectData, IntakeStep } from '@/types/intake'
 
-const stepLabels: Record<string, string> = {
-  greeting: 'Welkom',
-  category: 'Categorie kiezen',
-  property_type: 'Woningtype',
+const STEP_ORDER: IntakeStep[] = [
+  'category', 'property_type', 'surface', 'insulation', 'location', 'budget', 'timeline', 'summary',
+]
+
+const STEP_LABELS: Record<IntakeStep, string> = {
+  category: 'Project',
+  property_type: 'Woning',
   surface: 'Oppervlakte',
   insulation: 'Isolatie',
   location: 'Locatie',
-  budget: 'Budget & planning',
-  summary: 'Samenvatting',
+  budget: 'Budget',
+  timeline: 'Planning',
+  summary: 'Bevestiging',
 }
 
-const stepOrder = ['greeting', 'category', 'property_type', 'surface', 'insulation', 'location', 'budget', 'summary']
+const CATEGORY_TO_DB: Record<string, string> = {
+  warmtepomp: 'heat_pump_air_water',
+  ramen_deuren: 'windows_doors',
+  dakisolatie: 'roof_insulation',
+}
+
+const CATEGORY_TITLE: Record<string, string> = {
+  warmtepomp: 'Warmtepomp',
+  ramen_deuren: 'Ramen & deuren',
+  dakisolatie: 'Dakisolatie',
+}
 
 export function IntakePage() {
-  const { messages, isLoading, sendMessage } = useAIChat()
-  const { step, addMessage, reset } = useIntakeStore()
-  const scrollRef = useRef<HTMLDivElement>(null)
+  const { step, projectData, updateProjectData, setStep, reset } = useIntakeStore()
+  const { user } = useAuthStore()
   const navigate = useNavigate()
   const createProject = useCreateProject()
+  const [confirmError, setConfirmError] = useState<string | null>(null)
 
-  // Send greeting on mount
-  useEffect(() => {
-    if (messages.length === 0) {
-      addMessage({
-        id: crypto.randomUUID(),
-        role: 'assistant',
-        content:
-          'Welkom bij Planora! Ik help je graag met je woningproject. Welk type project heb je in gedachten?\n\n• Warmtepomp\n• Ramen & deuren\n• Dakisolatie',
-        timestamp: Date.now(),
-      })
-    }
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  const currentIndex = STEP_ORDER.indexOf(step)
 
-  // Auto-scroll
-  useEffect(() => {
-    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' })
-  }, [messages])
+  const handleNext = (data: Partial<IntakeProjectData>) => {
+    updateProjectData(data)
+    const next = STEP_ORDER[currentIndex + 1]
+    if (next) setStep(next)
+  }
 
-  const currentStepIndex = stepOrder.indexOf(step)
+  const handleBack = () => {
+    const prev = STEP_ORDER[currentIndex - 1]
+    if (prev) setStep(prev)
+  }
 
   const handleConfirm = async () => {
+    setConfirmError(null)
     try {
+      const category = projectData.category ?? ''
       const project = await createProject.mutateAsync({
-        title: 'Warmtepomp project',
-        category: 'heat_pump_air_water',
+        user_id: user?.id,
+        title: `${CATEGORY_TITLE[category] ?? 'Project'} project`,
+        category: CATEGORY_TO_DB[category] ?? category,
         status: 'intake',
-        city: 'Antwerpen',
-        postal_code: '2000',
+        city: projectData.city ?? '',
+        postal_code: projectData.postal_code ?? '',
+        brief: {
+          property_type: projectData.property_type ?? '',
+          surface_area: projectData.surface_area ?? 0,
+          insulation_level: projectData.insulation_level ?? '',
+          budget_range: projectData.budget_range ?? '',
+          timeline: projectData.timeline ?? '',
+          current_heating: '',
+          desired_system: '',
+          notes: '',
+          photos: [],
+        },
       })
       reset()
       navigate(`/app/project/${project.id}`)
-    } catch {
-      // Stay on page if creation fails
+    } catch (err) {
+      console.error('[IntakePage] createProject error:', err)
+      setConfirmError(err instanceof Error ? err.message : JSON.stringify(err))
     }
   }
 
   return (
-    <div className="flex h-full min-h-0 flex-col">
-      {/* Step indicator */}
-      <div className="border-b border-primary-100 bg-white px-4 py-3">
-        <div className="mx-auto flex max-w-2xl items-center gap-2">
-          {stepOrder.map((s, i) => (
-            <div key={s} className="flex items-center gap-2">
+    <div className="flex h-full min-h-0 flex-col bg-neutral-50">
+      {/* Progress bar */}
+      <div className="border-b border-neutral-200 bg-white px-4 py-3">
+        <div className="mx-auto flex max-w-lg items-center gap-2">
+          {STEP_ORDER.map((s, i) => (
+            <div key={s} className="flex items-center gap-1.5">
               <div
-                className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold ${
-                  i <= currentStepIndex
+                className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[10px] font-bold transition-colors ${
+                  i < currentIndex
                     ? 'bg-primary-600 text-white'
-                    : 'bg-primary-100 text-primary-400'
+                    : i === currentIndex
+                    ? 'bg-primary-600 text-white ring-4 ring-primary-100'
+                    : 'bg-neutral-200 text-neutral-400'
                 }`}
               >
                 {i + 1}
               </div>
-              {i < stepOrder.length - 1 && (
-                <div className={`h-px w-4 ${i < currentStepIndex ? 'bg-primary-600' : 'bg-primary-100'}`} />
+              {i < STEP_ORDER.length - 1 && (
+                <div
+                  className={`h-px flex-1 transition-colors ${
+                    i < currentIndex ? 'bg-primary-600' : 'bg-neutral-200'
+                  }`}
+                  style={{ width: '20px' }}
+                />
               )}
             </div>
           ))}
-          <span className="ml-3 text-sm font-medium text-primary-700">
-            {stepLabels[step] ?? step}
+          <span className="ml-2 text-xs font-medium text-primary-700">
+            {STEP_LABELS[step]}
           </span>
         </div>
       </div>
 
-      {/* Chat messages */}
-      <div ref={scrollRef} className="flex-1 overflow-y-auto">
-        <div className="mx-auto max-w-2xl space-y-4 px-4 py-6">
-          {messages.map((msg) => (
-            <ChatMessage key={msg.id} message={msg} />
-          ))}
-          {isLoading && (
-            <div className="flex justify-start">
-              <div className="mr-3 mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-100">
-                <img src="/favicon.png" alt="" className="h-4 w-4" />
-              </div>
-              <div className="rounded-2xl rounded-bl-md bg-primary-50 px-4 py-3 text-sm text-primary-400">
-                <span className="animate-pulse">Planora denkt na...</span>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Confirm button when at summary step */}
-      {step === 'summary' && (
-        <div className="border-t border-primary-100 bg-primary-50 px-4 py-3">
-          <div className="mx-auto max-w-2xl">
-            <button
-              onClick={handleConfirm}
-              disabled={createProject.isPending}
-              className="w-full rounded-xl bg-primary-600 py-3 text-sm font-semibold text-white hover:bg-primary-700 disabled:opacity-50 transition-colors"
-            >
-              {createProject.isPending ? 'Project aanmaken...' : 'Bevestig project'}
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Chat input */}
-      <div className="mx-auto w-full max-w-2xl">
-        <ChatInput onSend={sendMessage} disabled={isLoading} />
+      {/* Step content */}
+      <div className="flex flex-1 overflow-y-auto">
+        <StepView
+          step={step}
+          projectData={projectData}
+          onNext={handleNext}
+          onBack={handleBack}
+          onConfirm={handleConfirm}
+          isConfirming={createProject.isPending}
+          confirmError={confirmError}
+        />
       </div>
     </div>
   )

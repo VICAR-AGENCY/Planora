@@ -19,7 +19,7 @@ export interface ProjectBrief {
   desired_system: string
   surface_area: number
   insulation_level: string
-  budget_range: { min: number; max: number }
+  budget_range: string
   timeline: string
   notes: string
   photos: string[]

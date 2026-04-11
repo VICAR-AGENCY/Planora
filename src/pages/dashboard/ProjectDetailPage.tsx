@@ -88,22 +88,42 @@ export function ProjectDetailPage() {
         <div className="mt-6 rounded-xl border border-neutral-100 bg-white p-6">
           <h2 className="text-lg font-semibold text-neutral-900">Projectbrief</h2>
           <dl className="mt-4 grid gap-4 sm:grid-cols-2">
-            <div>
-              <dt className="text-sm text-neutral-500">Woningtype</dt>
-              <dd className="font-medium text-neutral-900">{project.brief.property_type}</dd>
-            </div>
-            <div>
-              <dt className="text-sm text-neutral-500">Huidige verwarming</dt>
-              <dd className="font-medium text-neutral-900">{project.brief.current_heating}</dd>
-            </div>
-            <div>
-              <dt className="text-sm text-neutral-500">Gewenst systeem</dt>
-              <dd className="font-medium text-neutral-900">{project.brief.desired_system}</dd>
-            </div>
-            <div>
-              <dt className="text-sm text-neutral-500">Oppervlakte</dt>
-              <dd className="font-medium text-neutral-900">{project.brief.surface_area} m²</dd>
-            </div>
+            {project.brief.property_type && (
+              <div>
+                <dt className="text-sm text-neutral-500">Woningtype</dt>
+                <dd className="font-medium capitalize text-neutral-900">{project.brief.property_type}</dd>
+              </div>
+            )}
+            {project.brief.surface_area > 0 && (
+              <div>
+                <dt className="text-sm text-neutral-500">Oppervlakte</dt>
+                <dd className="font-medium text-neutral-900">{project.brief.surface_area} m²</dd>
+              </div>
+            )}
+            {project.brief.insulation_level && (
+              <div>
+                <dt className="text-sm text-neutral-500">Isolatie</dt>
+                <dd className="font-medium capitalize text-neutral-900">{project.brief.insulation_level}</dd>
+              </div>
+            )}
+            {project.brief.budget_range && (
+              <div>
+                <dt className="text-sm text-neutral-500">Budget</dt>
+                <dd className="font-medium text-neutral-900">{project.brief.budget_range}</dd>
+              </div>
+            )}
+            {project.city && (
+              <div>
+                <dt className="text-sm text-neutral-500">Locatie</dt>
+                <dd className="font-medium text-neutral-900">{project.city}{project.postal_code ? ` (${project.postal_code})` : ''}</dd>
+              </div>
+            )}
+            {project.brief.timeline && (
+              <div>
+                <dt className="text-sm text-neutral-500">Tijdstip</dt>
+                <dd className="font-medium text-neutral-900">{project.brief.timeline}</dd>
+              </div>
+            )}
           </dl>
           {project.brief.photos && project.brief.photos.length > 0 && (
             <div className="mt-6">
