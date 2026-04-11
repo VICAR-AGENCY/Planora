@@ -136,9 +136,6 @@ export function StepWerkgebied({ data, onChange }: Props) {
     return c.some((city) => isCitySelected(city.prefix)) && !isProvinceFull(provId)
   }
 
-  function isRegionFull(regionId: string) {
-    return REGIONS.find((r) => r.id === regionId)!.provinces.every(isProvinceFull)
-  }
 
 // ── Toggle actions ─────────────────────────────────────────────────────────
 
