@@ -17,6 +17,10 @@ import { DakisolatiePage } from '@/pages/category/DakisolatiePage'
 import { HeatPumpCalculatorPage } from '@/pages/calculator/HeatPumpCalculatorPage'
 import { WindowPriceCalculatorPage } from '@/pages/calculator/WindowPriceCalculatorPage'
 import { RoofInsulationCalculatorPage } from '@/pages/calculator/RoofInsulationCalculatorPage'
+import { RoofRenovationCalculatorPage } from '@/pages/calculator/RoofRenovationCalculatorPage'
+import { SolarPanelCalculatorPage } from '@/pages/calculator/SolarPanelCalculatorPage'
+import { WallInsulationCalculatorPage } from '@/pages/calculator/WallInsulationCalculatorPage'
+import { TilingCalculatorPage } from '@/pages/calculator/TilingCalculatorPage'
 
 // Blog pages
 import { BlogOverviewPage } from '@/pages/blog/BlogOverviewPage'
@@ -79,6 +83,10 @@ export default function App() {
             <Route path="/calculator/warmtepomp" element={<HeatPumpCalculatorPage />} />
             <Route path="/calculator/raamprijs" element={<WindowPriceCalculatorPage />} />
             <Route path="/calculator/dakisolatie" element={<RoofInsulationCalculatorPage />} />
+            <Route path="/calculator/dakrenovatie" element={<RoofRenovationCalculatorPage />} />
+            <Route path="/calculator/zonnepanelen" element={<SolarPanelCalculatorPage />} />
+            <Route path="/calculator/muurisolatie" element={<WallInsulationCalculatorPage />} />
+            <Route path="/calculator/tegelwerken" element={<TilingCalculatorPage />} />
             <Route path="/hoe-het-werkt" element={<HowItWorksPage />} />
             <Route path="/over-planora" element={<AboutPage />} />
             <Route path="/vakmensen" element={<VakmannenPage />} />

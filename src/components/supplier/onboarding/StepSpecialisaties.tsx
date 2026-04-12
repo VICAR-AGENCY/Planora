@@ -1,4 +1,4 @@
-import { Thermometer, Home, LayoutGrid, Sun, Layers, Flame, Wind, Zap, Droplets, Hammer } from 'lucide-react'
+import { Thermometer, Home, LayoutGrid, Sun, Layers, Flame, Wind, Zap, Droplets, Hammer, Grid3x3 } from 'lucide-react'
 import { cn } from '@/lib/utils/cn'
 import type { OnboardingData } from './types'
 
@@ -13,6 +13,7 @@ const CATEGORIES = [
   { value: 'elektriciteit', label: 'Elektriciteit', icon: Zap },
   { value: 'sanitair', label: 'Sanitair', icon: Droplets },
   { value: 'dakrenovatie', label: 'Dakrenovatie', icon: Hammer },
+  { value: 'tegelwerken', label: 'Tegelwerken', icon: Grid3x3 },
 ]
 
 interface Props {

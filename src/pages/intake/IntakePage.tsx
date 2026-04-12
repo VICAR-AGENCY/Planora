@@ -25,12 +25,20 @@ const CATEGORY_TO_DB: Record<string, string> = {
   warmtepomp: 'heat_pump_air_water',
   ramen_deuren: 'windows_doors',
   dakisolatie: 'roof_insulation',
+  dakrenovatie: 'dakrenovatie',
+  zonnepanelen: 'zonnepanelen',
+  muurisolatie: 'muurisolatie',
+  tegelwerken: 'tegelwerken',
 }
 
 const CATEGORY_TITLE: Record<string, string> = {
   warmtepomp: 'Warmtepomp',
   ramen_deuren: 'Ramen & deuren',
   dakisolatie: 'Dakisolatie',
+  dakrenovatie: 'Dakrenovatie',
+  zonnepanelen: 'Zonnepanelen',
+  muurisolatie: 'Muurisolatie',
+  tegelwerken: 'Tegelwerken',
 }
 
 export function IntakePage() {

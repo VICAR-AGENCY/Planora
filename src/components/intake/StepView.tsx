@@ -5,6 +5,7 @@ import {
   CheckCircle2, Minus, AlertCircle,
   Banknote, Calendar,
   ClipboardCheck, MapPin, Ruler,
+  Sun, Hammer, Grid3x3,
 } from 'lucide-react'
 import { cn } from '@/lib/utils/cn'
 import { LocationSearch } from '@/components/leads/LocationSearch'
@@ -127,6 +128,10 @@ function CategoryStep({ data, onNext, onBack }: { data: Partial<IntakeProjectDat
     { value: 'warmtepomp', label: 'Warmtepomp', sublabel: 'Verwarming & koeling', icon: Thermometer },
     { value: 'ramen_deuren', label: 'Ramen & deuren', sublabel: 'Beglazing & schrijnwerk', icon: LayoutPanelLeft },
     { value: 'dakisolatie', label: 'Dakisolatie', sublabel: 'Isolatie & renovatie', icon: Home },
+    { value: 'dakrenovatie', label: 'Dakrenovatie', sublabel: 'Dak & dakwerken', icon: Hammer },
+    { value: 'zonnepanelen', label: 'Zonnepanelen', sublabel: 'Zonne-energie', icon: Sun },
+    { value: 'muurisolatie', label: 'Muurisolatie', sublabel: 'Gevel & spouwmuur', icon: LayersIcon },
+    { value: 'tegelwerken', label: 'Tegelwerken', sublabel: 'Vloer & wandtegels', icon: Grid3x3 },
   ]
 
   return (
@@ -139,7 +144,7 @@ function CategoryStep({ data, onNext, onBack }: { data: Partial<IntakeProjectDat
       onBack={onBack}
       showBack={false}
     >
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-3 gap-3 sm:grid-cols-4">
         {options.map((o) => (
           <OptionCard
             key={o.value}

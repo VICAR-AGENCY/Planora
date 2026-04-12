@@ -16,6 +16,7 @@ const CATEGORY_LABELS: Record<string, string> = {
   elektriciteit: 'Elektriciteit',
   sanitair: 'Sanitair',
   dakrenovatie: 'Dakrenovatie',
+  tegelwerken: 'Tegelwerken',
 }
 
 function formatDate(iso: string) {

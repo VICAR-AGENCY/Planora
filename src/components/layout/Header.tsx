@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
-import { Menu, X, ChevronDown, Flame, Square, Home, Users, ChevronRight, User, HardHat, LayoutDashboard, FolderOpen, FileText, MessageSquare, UserCircle } from 'lucide-react'
+import { Menu, X, ChevronDown, Flame, Square, Home, Users, ChevronRight, User, HardHat, LayoutDashboard, FolderOpen, FileText, MessageSquare, UserCircle, Hammer, Sun, Layers, Grid3x3 } from 'lucide-react'
 import { useState } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import { useSupplier } from '@/hooks/useSupplier'
@@ -37,6 +37,38 @@ const projectTypes = [
       { label: 'Calculator', to: '/calculator/dakisolatie' },
       { label: 'Prijsgids 2025', to: '/gids/dakisolatie-kosten-2025' },
       { label: 'Premies 2025', to: '/gids/dakisolatie-premies-2025' },
+    ],
+  },
+  {
+    label: 'Dakrenovatie',
+    icon: Hammer,
+    description: 'Vernieuw je dak volledig',
+    links: [
+      { label: 'Calculator', to: '/calculator/dakrenovatie' },
+    ],
+  },
+  {
+    label: 'Zonnepanelen',
+    icon: Sun,
+    description: 'Produceer je eigen energie',
+    links: [
+      { label: 'Calculator', to: '/calculator/zonnepanelen' },
+    ],
+  },
+  {
+    label: 'Muurisolatie',
+    icon: Layers,
+    description: 'Isoleer je gevels efficiënt',
+    links: [
+      { label: 'Calculator', to: '/calculator/muurisolatie' },
+    ],
+  },
+  {
+    label: 'Tegelwerken',
+    icon: Grid3x3,
+    description: 'Vloer- en wandtegels plaatsen',
+    links: [
+      { label: 'Calculator', to: '/calculator/tegelwerken' },
     ],
   },
 ]
@@ -102,9 +134,9 @@ export function Header() {
                 {/* Mega Menu */}
                 {megaMenuOpen && (
                   <div className="absolute left-1/2 -translate-x-1/2 top-full pt-2 z-50">
-                    <div className="rounded-2xl border border-primary-100 bg-white shadow-xl min-w-[900px]">
+                    <div className="rounded-2xl border border-primary-100 bg-white shadow-xl min-w-[1100px]">
                       <div className="p-6">
-                        <div className="grid grid-cols-3 gap-4">
+                        <div className="grid grid-cols-4 gap-3">
                           {projectTypes.map((project) => (
                             <div
                               key={project.label}
@@ -134,12 +166,6 @@ export function Header() {
                             </div>
                           ))}
                         </div>
-                      </div>
-                      <div className="border-t border-primary-100 bg-neutral-50/50 px-6 py-4 rounded-b-2xl">
-                        <p className="text-sm text-neutral-500">
-                          Meer projecttypes komen binnenkort:{' '}
-                          <span className="text-neutral-400">Dakrenovatie, Zonnepanelen, Muurisolatie, Tegelwerken...</span>
-                        </p>
                       </div>
                     </div>
                   </div>
